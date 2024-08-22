@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ category.name }}</title>
+</head>
+<body>
+    <h1>Items in {{ category.name }}</h1>
+    <ul>
+        {% for item in items %}
+        <li><a href="{% url 'item_detail' item.id %}">{{ item.title }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">Back to home</a>
+</body>
+</html>

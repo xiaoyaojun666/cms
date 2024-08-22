@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    {% load static %}
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-results {
+            margin-top: 20px;
+        }
+        .search-results h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .search-results ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .search-results ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-results ul li a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .search-results ul li a:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-results">
+            <h1>Search Results</h1>
+            <ul class="list-unstyled">
+                {% for item in items %}
+                <li>
+                    <a href="{% url 'item_detail' item.id %}">{{ item.title }}</a>
+                    <p class="text-muted">{{ item.published_date }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            <a class="btn btn-primary back-link" href="{% url 'index' %}">Back to home</a>
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

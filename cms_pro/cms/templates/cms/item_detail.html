@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.title }}</title>
+    {% load static %}
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2.5rem;
+        }
+        .content p, .content a {
+            font-size: 1.2rem;
+        }
+        .published-date {
+            font-size: 1rem;
+            color: gray;
+        }
+        .btn-back {
+            font-size: 1rem;
+        }
+        .summary-content {
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            display: none; /* 初始隐藏显示区域 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ item.title }}</h1>
+        <p class="published-date">Published on: {{ item.published_date }}</p>
+        <div class="content">
+            <p>{{ item.content }}</p>
+            <p class="paper-url"><a href="{{ item.paper_url }}" target="_blank">Read full paper</a></p>
+        </div>
+        <div class="d-flex flex-column">
+            <button class="btn btn-secondary btn-sm mb-3" onclick="getSummary({{ item.id }})">GLM Quick Understanding</button>
+            <div id="summary-content" class="summary-content"></div>
+            <a class="btn btn-primary btn-back mt-3" href="{% url 'index' %}">Back to home</a>
+        </div>
+    </div>
+
+    <!-- 引入 jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- 引入 Bootstrap JS -->
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- 使用 CDN 链接引入 marked.js -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        function getSummary(itemId) {
+            const summaryDiv = document.getElementById('summary-content');
+
+            // 发起 AJAX 请求
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/item_summary/${itemId}/`, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    // 确保状态码是200
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        // 使用 marked.js 将 markdown 转换为 HTML 并显示
+                        if (typeof marked !== 'undefined') {
+                            summaryDiv.innerHTML = marked.parse(response.markdown_content);
+                        } else {
+                            console.error('marked.js is not available.');
+                        }
+                        summaryDiv.style.display = 'block';
+                    } else {
+                        console.error(`Error: Received status code ${xhr.status}`);
+                    }
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
